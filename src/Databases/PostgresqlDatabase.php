@@ -4,10 +4,7 @@
  * Class PostgresqlDatabase
  * @package BackupManager\Databases
  */
-class PostgresqlDatabase implements Database {
-
-    /** @var array */
-    private $config;
+class PostgresqlDatabase extends Database {
 
     /**
      * @param $type
@@ -15,14 +12,6 @@ class PostgresqlDatabase implements Database {
      */
     public function handles($type) {
         return in_array(strtolower($type), ['postgresql', 'pgsql']);
-    }
-
-    /**
-     * @param array $config
-     * @return null
-     */
-    public function setConfig(array $config) {
-        $this->config = $config;
     }
 
     /**

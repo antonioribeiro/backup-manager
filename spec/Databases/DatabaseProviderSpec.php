@@ -23,11 +23,27 @@ class DatabaseProviderSpec extends ObjectBehavior {
         $this->get('development')->shouldHaveType('BackupManager\Databases\MysqlDatabase');
     }
 
+    function it_should_provide_requested_database_renamed() {
+        $this->add(new MysqlDatabase);
+        $this->get('development', 'newdatabase')->getConfig()->shouldBe($this->getConfig());
+    }
+
     function it_should_throw_an_exception_if_a_database_is_unsupported() {
         $this->shouldThrow('BackupManager\Databases\DatabaseTypeNotSupported')->during('get', ['unsupported']);
     }
 
     function it_should_provide_a_list_of_available_databases() {
         $this->getAvailableProviders()->shouldBe(['development', 'developmentSingleTrans', 'production', 'unsupported', 'null']);
+    }
+
+    function getConfig() {
+        return [
+            'type' => 'mysql',
+            'host' => 'foo',
+            'port' => '3306',
+            'user' => 'bar',
+            'pass' => 'baz',
+            'database' => 'newdatabase',
+        ];
     }
 }

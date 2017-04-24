@@ -4,10 +4,7 @@
  * Class MysqlDatabase
  * @package BackupManager\Databases
  */
-class MysqlDatabase implements Database {
-
-    /** @var array */
-    private $config;
+class MysqlDatabase extends Database {
 
     /**
      * @param $type
@@ -15,14 +12,6 @@ class MysqlDatabase implements Database {
      */
     public function handles($type) {
         return strtolower($type) == 'mysql';
-    }
-
-    /**
-     * @param array $config
-     * @return null
-     */
-    public function setConfig(array $config) {
-        $this->config = $config;
     }
 
     /**

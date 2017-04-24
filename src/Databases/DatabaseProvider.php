@@ -28,16 +28,17 @@ class DatabaseProvider {
     }
 
     /**
-     * @param $name
+     * @param $connectionName
+     * @param string|null $databaseName
      * @return Database
      * @throws DatabaseTypeNotSupported
-     * @throws \BackupManager\Config\ConfigNotFoundForConnection
      */
-    public function get($name) {
-        $type = $this->config->get($name, 'type');
+    public function get($connectionName, $databaseName = null) {
+        $type = $this->config->get($connectionName, 'type');
         foreach ($this->databases as $database) {
             if ($database->handles($type)) {
-                $database->setConfig($this->config->get($name));
+                $database->setConfig($this->config->get($connectionName));
+                $database->setDatabaseName($databaseName);
                 return $database;
             }
         }
@@ -50,4 +51,4 @@ class DatabaseProvider {
     public function getAvailableProviders() {
         return array_keys($this->config->getItems());
     }
-} 
+}

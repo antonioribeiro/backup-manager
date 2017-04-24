@@ -18,7 +18,7 @@ class BackupProcedure extends Procedure {
      * @throws \BackupManager\Databases\DatabaseTypeNotSupported
      * @throws \BackupManager\Config\ConfigNotFoundForConnection
      */
-    public function run($database, array $destinations, $compression) {
+    public function run($database, array $destinations, $compression, $databaseName) {
         $sequence = new Sequence;
 
         // begin the life of a new working file
@@ -27,7 +27,7 @@ class BackupProcedure extends Procedure {
 
         // dump the database
         $sequence->add(new Tasks\Database\DumpDatabase(
-            $this->databases->get($database),
+            $this->databases->get($database, $databaseName),
             $workingFile,
             $this->shellProcessor
         ));

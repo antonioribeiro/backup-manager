@@ -4,29 +4,33 @@
  * Class Database
  * @package BackupManager\Databases
  */
-interface Database {
+abstract class Database implements DatabaseContract {
+
+    /** @var array */
+    protected $config;
 
     /**
-     * @param $type
-     * @return bool
+     * @return array
      */
-    public function handles($type);
+    public function getConfig() {
+        return $this->config;
+    }
 
     /**
      * @param array $config
      * @return null
      */
-    public function setConfig(array $config);
+    public function setConfig(array $config) {
+        $this->config = $config;
+    }
 
     /**
-     * @param $inputPath
-     * @return string
+     * @param $databaseName
+     * @return null
      */
-    public function getDumpCommandLine($inputPath);
-
-    /**
-     * @param $outputPath
-     * @return string
-     */
-    public function getRestoreCommandLine($outputPath);
+    public function setDatabaseName($databaseName) {
+        if (! is_null($databaseName)) {
+            $this->config['database'] = $databaseName;
+        }
+    }
 }
