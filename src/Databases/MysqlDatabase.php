@@ -26,6 +26,9 @@ class MysqlDatabase extends Database {
         if (array_key_exists('ignoreTables', $this->config)) {
             $extras[] = $this->getIgnoreTableParameter();
         }
+        if (array_key_exists('ssl', $this->config) && $this->config['ssl'] === true) {
+    		$extras[] = '--ssl';
+    	}
     	$command = 'mysqldump --routines '.implode(' ', $extras).' --host=%s --port=%s --user=%s --password=%s %s > %s';
         return sprintf($command,
             escapeshellarg($this->config['host']),
@@ -42,7 +45,11 @@ class MysqlDatabase extends Database {
      * @return string
      */
     public function getRestoreCommandLine($inputPath) {
-        return sprintf('mysql --host=%s --port=%s --user=%s --password=%s %s -e "source %s"',
+        $extras = [];
+        if (array_key_exists('ssl', $this->config) && $this->config['ssl'] === true) {
+    		$extras[] = '--ssl';
+    	}
+        return sprintf('mysql --host=%s --port=%s --user=%s --password=%s '.implode(' ', $extras).' %s -e "source %s"',
             escapeshellarg($this->config['host']),
             escapeshellarg($this->config['port']),
             escapeshellarg($this->config['user']),
@@ -62,12 +69,17 @@ class MysqlDatabase extends Database {
         }
 
         $db = $this->config['database'];
-        $ignoreTables = implode(',', array_map(function($table) use ($db) {
+        $ignoreTables = array_map(function($table) use ($db) {
             return $db.'.'.$table;
-        }, $this->config['ignoreTables']));
+        }, $this->config['ignoreTables']);
 
-        return sprintf('--ignore-table=%s',
-            escapeshellarg($ignoreTables)
-        );
+        $commands=[];
+        foreach($ignoreTables AS $ignoreTable) {
+            $commands[]=sprintf('--ignore-table=%s',
+                escapeshellarg($ignoreTable)
+            );
+        }
+        
+        return implode(' ',$commands);
     }
 }
